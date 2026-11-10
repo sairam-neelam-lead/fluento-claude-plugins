@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "lab-agent": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/server.js"],
+      "env": {
+        "LAB_AGENT_API_URL": "${LAB_AGENT_API_URL:-https://dev-flowbuilder-fluento.leadschool.in/be/api/v1}",
+        "ADMIN_API_KEY": "${ADMIN_API_KEY}"
+      }
+    }
+  }
+}

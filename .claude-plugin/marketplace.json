@@ -1,0 +1,8 @@
+{
+  "name": "fluento",
+  "owner": { "name": "Fluento" },
+  "description": "Fluento's Claude Code plugins",
+  "plugins": [
+    { "name": "fluento-lab", "source": "./fluento-lab-plugin", "description": "Generate draft Fluento labs from lab skills" }
+  ]
+}
