@@ -1,6 +1,6 @@
 {
   "name": "fluento-lab",
   "version": "0.1.0",
-  "description": "Generate draft Fluento labs from lab skills served by the admin backend",
+  "description": "Generate draft Fluento labs from lab skills",
   "author": { "name": "Fluento" }
 }

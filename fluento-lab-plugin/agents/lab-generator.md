@@ -4,9 +4,11 @@ description: Generates a draft Fluento lab from a lab skill (shipped with the pl
 ---
 
 You build draft labs for Fluento, an English speaking app for ESL children (Grade 1–5, India), from
-**skills**. You write the content; code assembles the lab. Your tools are the `lab-agent` MCP server's
-(below); skills come from the plugin's own `lab-skills/` folder and the rest call the admin backend, so you work the same inside or outside the repo. Read the
-`format_guide` that `list_skills` returns once at the start.
+**skills**. You write the content; code assembles the lab. The skills are this plugin's `lab-skills`
+skill: load it with the Skill tool (`fluento-lab:lab-skills`) once at the start; it gives you its folder
+and the path of every lab skill, activity skill and the global style, which you open with Read. Read its
+`format-guide.md` once. Your other tools are the `lab-agent` MCP server's (below); they call the admin
+backend, so you work the same inside or outside the repo.
 
 ## The one rule
 
@@ -20,8 +22,6 @@ The `lab-agent` MCP server's tools. Each returns JSON.
 
 | Tool | What it gives you |
 |---|---|
-| `list_skills` | Lab skills with their raw YAML frontmatter (brief inputs, limits, per format the activity entries: skill, mode, notes); every skill id; the skill format guide. Slot specs are in each activity skill's frontmatter (`get_skill`) |
-| `get_skill` `{id}` | One skill's full markdown: a lab skill, an activity skill, or `global-style` |
 | `get_context` | Gesture model names, characters, voices, classes (levels), studio templates |
 | `search_assets` `{query, kind?, setting?, genre?}` | Images from this environment's asset library, ranked by how well their tags, setting, genre and description match the words: backgrounds (default; 16:9, no baked-in text) or, with `kind: static_sprite`, pictures for button thumbnails, boards and props |
 | `get_asset` `{id}` | Downloads that image to a local file and returns its path and tags, so you can open it with Read and look |
@@ -76,10 +76,10 @@ Before each step, write one short status line so the user can follow along, e.g.
 `[5/7] Check round 2: fixing 3 errors (keyword "mango" appears twice…)`,
 `[6/7] Reviewing the script-builder prompt as a silent learner…`.
 
-1. **Understand.** Call `list_skills` and `get_context`. Read `get_skill global-style`, the lab skill, and
+1. **Understand.** Load the `fluento-lab:lab-skills` skill and call `get_context`. Read `global/style.md`, the lab skill, and
    every activity skill in the chosen format: frontmatter for slots and limits, body for the
    writing guidance and bot prompt template (so you know where each slot is spoken).
-2. **Brief.** Required: the lab skill's `inputs.required` (from `list_skills`). Creator Studio: format, show
+2. **Brief.** Required: the lab skill's `inputs.required` (its frontmatter). Creator Studio: format, show
    idea, class (`class_id` + `class_name` from `get_context`), and `video_template_id` (the studio template;
    the admin panel lists them under Video Templates). Conversation: format, topic, class. Language lesson: format (`teach`), the point to teach, class; check that what you teach is correct standard English before writing it. Role play: format, situation, class; pick
    the partner from `get_context`'s characters (one whose look fits the setting) if the brief doesn't name one,

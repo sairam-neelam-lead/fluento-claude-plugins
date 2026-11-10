@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// MCP server (stdio) for the lab-generator agent. Lab skills are read from the plugin's lab-skills/ folder;
-// everything else calls the admin backend's /lab-agent API (admin/backend/src/routes/labAgent.js) and keeps
-// files local: plan files, rendered prompts, downloaded images.
+// MCP server (stdio) for the lab-generator agent. Lab skills ship as the plugin's lab-skills skill; this
+// server only calls the admin backend's /lab-agent API
+// (admin/backend/src/routes/labAgent.js) and keeps files local: plan files, rendered prompts, downloaded images.
 // No dependencies; needs Node 20 (built-in fetch).
 //   LAB_AGENT_API_URL  admin API base, e.g. https://dev-flowbuilder-fluento.leadschool.in/be/api/v1
 //   ADMIN_API_KEY      the admin backend's API key
@@ -47,48 +47,8 @@ const readPlan = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const writePlan = (p, plan) => fs.writeFileSync(p, JSON.stringify(plan, null, 2));
 const qs = (o) => new URLSearchParams(Object.entries(o).filter(([, v]) => v !== undefined && v !== '')).toString();
 
-// Lab skills ship with the plugin in ../lab-skills (same layout as the backend's admin/backend/skills).
-// ponytail: frontmatter returned as raw YAML (no deps); add a parser if the agent needs structured fields.
-const SKILLS_DIR = path.join(__dirname, '..', 'lab-skills');
-function localSkills() {
-	const files = [path.join(SKILLS_DIR, 'global/style.md')];
-	for (const kind of ['labs', 'activities'])
-		for (const dir of fs.readdirSync(path.join(SKILLS_DIR, kind))) files.push(path.join(SKILLS_DIR, kind, dir, 'SKILL.md'));
-	return files.map((file) => {
-		const src = fs.readFileSync(file, 'utf8');
-		const frontmatter = src.match(/^---\n([\s\S]*?)\n---\n/)?.[1] || '';
-		const field = (k) => frontmatter.match(new RegExp(`^${k}:\\s*(.+?)\\s*$`, 'm'))?.[1];
-		return { id: field('id'), kind: field('kind'), version: Number(field('version')), file, frontmatter, markdown: src };
-	});
-}
-function localSkill(id) {
-	const skill = localSkills().find((s) => s.id === id);
-	if (!skill) throw new Error(`Skill not found: ${id}`);
-	return skill;
-}
-
 const str = { type: 'string' };
 const TOOLS = {
-	list_skills: {
-		description: "Lab skills with their raw YAML frontmatter (brief inputs, limits, per format the activity entries), every skill id, and the skill format guide. Slot specs are in each activity skill's frontmatter (get_skill).",
-		schema: {},
-		local: true,
-		run: () => {
-			const all = localSkills();
-			return {
-				lab_skills: all.filter((s) => s.kind === 'lab').map(({ id, version, frontmatter }) => ({ id, version, frontmatter })),
-				all_skills: all.map(({ id, kind, version }) => ({ id, kind, version })),
-				format_guide: fs.readFileSync(path.join(SKILLS_DIR, 'README.md'), 'utf8'),
-			};
-		},
-	},
-	get_skill: {
-		description: "One skill's full markdown: a lab skill, an activity skill, or global-style.",
-		schema: { id: str },
-		required: ['id'],
-		local: true,
-		run: ({ id }) => ({ id, markdown: localSkill(id).markdown }),
-	},
 	get_context: {
 		description: 'Gesture model names, characters, voices, classes (levels) and studio templates.',
 		schema: {},
@@ -148,7 +108,7 @@ async function handle(msg) {
 		const tool = TOOLS[params.name];
 		if (!tool) throw Object.assign(new Error(`Unknown tool ${params.name}`), { code: -32602 });
 		try {
-			if (!tool.local && (!process.env.LAB_AGENT_API_URL || !process.env.ADMIN_API_KEY)) throw new Error('Set LAB_AGENT_API_URL and ADMIN_API_KEY (see the fluento-lab plugin README).');
+			if (!process.env.LAB_AGENT_API_URL || !process.env.ADMIN_API_KEY) throw new Error('Set LAB_AGENT_API_URL and ADMIN_API_KEY (see the fluento-lab plugin README).');
 			return { content: [{ type: 'text', text: JSON.stringify(await tool.run(params.arguments || {}), null, 2) }] };
 		} catch (e) {
 			return { content: [{ type: 'text', text: e.message }], isError: true };
