@@ -2,8 +2,9 @@
 
 Generates draft Fluento labs. It holds the `lab-generator` agent, the `/fluento-lab:generate-lab` skill,
 and a small MCP server (`mcp/server.js`) that calls the admin backend's `/api/v1/lab-agent` API
-(`admin/backend/src/routes/labAgent.js` in the pipecat-testing-tool repo). Lab skills themselves stay in that
-repo's `admin/backend/skills/`; the backend serves them.
+(`admin/backend/src/routes/labAgent.js` in the pipecat-testing-tool repo). Lab skills live in this plugin's `lab-skills/`
+(copied from that repo's `admin/backend/skills/`); `list_skills` and `get_skill` read them locally. The backend's
+`check`/`save` still validate against its own copy, so keep both in sync when a skill changes.
 
 ## Needs
 

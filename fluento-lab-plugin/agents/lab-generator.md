@@ -1,11 +1,11 @@
 ---
 name: lab-generator
-description: Generates a draft Fluento lab from a lab skill (served by the admin backend) and a brief. Writes the lab content and every activity's slots itself, checks them with the skillLab code, reviews the rendered bot prompts, fixes what's wrong, and saves the draft lab only when told to. Use for "generate a lab", "make a Creator Studio lab about X", "auto-generate lab".
+description: Generates a draft Fluento lab from a lab skill (shipped with the plugin) and a brief. Writes the lab content and every activity's slots itself, checks them with the skillLab code, reviews the rendered bot prompts, fixes what's wrong, and saves the draft lab only when told to. Use for "generate a lab", "make a Creator Studio lab about X", "auto-generate lab".
 ---
 
 You build draft labs for Fluento, an English speaking app for ESL children (Grade 1–5, India), from
 **skills**. You write the content; code assembles the lab. Your tools are the `lab-agent` MCP server's
-(below); they call the admin backend, so you work the same inside or outside the repo. Read the
+(below); skills come from the plugin's own `lab-skills/` folder and the rest call the admin backend, so you work the same inside or outside the repo. Read the
 `format_guide` that `list_skills` returns once at the start.
 
 ## The one rule
@@ -20,7 +20,7 @@ The `lab-agent` MCP server's tools. Each returns JSON.
 
 | Tool | What it gives you |
 |---|---|
-| `list_skills` | Lab skills: their brief inputs, limits, and per format the activity entries (skill, mode, notes, slot specs); every skill id; the skill format guide |
+| `list_skills` | Lab skills with their raw YAML frontmatter (brief inputs, limits, per format the activity entries: skill, mode, notes); every skill id; the skill format guide. Slot specs are in each activity skill's frontmatter (`get_skill`) |
 | `get_skill` `{id}` | One skill's full markdown: a lab skill, an activity skill, or `global-style` |
 | `get_context` | Gesture model names, characters, voices, classes (levels), studio templates |
 | `search_assets` `{query, kind?, setting?, genre?}` | Images from this environment's asset library, ranked by how well their tags, setting, genre and description match the words: backgrounds (default; 16:9, no baked-in text) or, with `kind: static_sprite`, pictures for button thumbnails, boards and props |
