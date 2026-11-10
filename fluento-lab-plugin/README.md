@@ -19,7 +19,7 @@ repo's `admin/backend/skills/`; the backend serves them.
 }
 ```
 
-`LAB_AGENT_API_URL` defaults to dev. For a local backend use `http://localhost:3025/api/v1`.
+`LAB_AGENT_API_URL` defaults to dev. For a local backend use `https://dev-flowbuilder-fluento.leadschool.in/be/api/v1`.
 Never commit the key.
 
 ## Try it locally (while developing the plugin)
