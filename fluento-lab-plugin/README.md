@@ -2,9 +2,10 @@
 
 Generates draft Fluento labs. It holds the `lab-generator` agent, the `/fluento-lab:generate-lab` skill,
 and a small MCP server (`mcp/server.js`) that calls the admin backend's `/api/v1/lab-agent` API
-(`admin/backend/src/routes/labAgent.js` in the pipecat-testing-tool repo). Lab skills are this plugin's `lab-skills` skill
-(`skills/lab-skills/`, copied from that repo's `admin/backend/skills/`; its README is `format-guide.md`). The
-agent loads it and reads the files it needs. The backend's `check`/`save` still validate against its own
+(`admin/backend/src/routes/labAgent.js` in the pipecat-testing-tool repo). Lab skills are the `fluento-lab-skills` skill on the Claude
+account (Settings → Capabilities → Skills; copied from that repo's `admin/backend/skills/`), which Claude Code
+syncs in as `anthropic-skills:fluento-lab-skills`. The agent loads it and reads the files it needs. If
+the skill is missing, the agent can't run: upload it (or have it shared with the org) first. The backend's `check`/`save` still validate against its own
 copy, so keep both in sync when a skill changes.
 
 ## Needs

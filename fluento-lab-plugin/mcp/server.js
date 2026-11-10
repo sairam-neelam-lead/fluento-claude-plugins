@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// MCP server (stdio) for the lab-generator agent. Lab skills ship as the plugin's lab-skills skill; this
+// MCP server (stdio) for the lab-generator agent. Lab skills are the fluento-lab-skills account skill; this
 // server only calls the admin backend's /lab-agent API
 // (admin/backend/src/routes/labAgent.js) and keeps files local: plan files, rendered prompts, downloaded images.
 // No dependencies; needs Node 20 (built-in fetch).
